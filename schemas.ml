@@ -29,10 +29,18 @@ let iterative base condition suivant operation = function x ->
  *      else operation (fun suivant1 x) (fun suivant2 x)
  * ;;
  *)
-let recursiveTerminale2 base condition suivant1 suivant2 operation = function x ->
-    let rec aux y t u =
-        if (condition y) then t
-        else (aux (suivant1 y) (operation y t) (aux (suivant2 y) (operation y t) u))
+let recursiveTerminale2 base condition suivant1 suivant2 operation op = function x ->
+    let isEmpty l = match l with
+        [] -> true
+        | h :: q -> false
+    and toList l = match l with
+        [] -> []
+        | (x, acc) :: q -> if (condition x) then q else ((suivant1 x), (op acc))
+        :: ((suivant2 x), (op acc)) :: q
+    and newoper l acc = match l with
+        [] -> acc
+        | (x, accL) :: q -> if (condition x) then (operation accL acc) else
+            acc
     in
-    (aux x base base)
+    (recursiveTerminale base isEmpty toList newoper) [(x, base)]
 ;;
