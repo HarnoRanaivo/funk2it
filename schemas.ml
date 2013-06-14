@@ -4,6 +4,8 @@
  *      else operation x (fun suivant x)
  * ;;
  *
+ * operation doit être commutative et transitive ?
+ *
  * Exemple:
  * let rec factorielle n =
  *      if n = 0 then 1
@@ -17,6 +19,15 @@
  *
  * let factorielleRecTer = recursiveTerminale 1 ((=) 0) ((+) (-1)) ( * );;
  * let factorielleIter = iterative 1 ((=) 0) ((+) (-1)) ( * );;
+ *
+ * Dans les cas où base est une fonction...??
+ * L'accumulateur semble devoir commencer à l'élément neutre de l'operation...
+ * let recursiveTerminale base condition suivant operation neutre = function x ->
+ *      let rec aux y t =
+ *          if condition y then operation (base y) a
+ *          else aux (suivant y) (operation y a)
+ *      in aux y neutre
+ * ;;
  *)
 let recursiveTerminale base condition suivant operation = function x ->
     let rec aux y t =
@@ -25,7 +36,6 @@ let recursiveTerminale base condition suivant operation = function x ->
     in
     (aux x base)
 ;;
-(* let factorielle n = (recursiveTerminale 1 ((=) 0) ((+) (-1)) ( * )) n;; *)
 
 let iterative base condition suivant operation = function x ->
     let resultat = ref base
@@ -36,6 +46,19 @@ let iterative base condition suivant operation = function x ->
     done;
     !resultat
 ;;
+(* Peut se transformer en for, dans les cas où (condition, suivant) sont
+ * si condition : (fun x -> x >= N) et suivant : (fun x -> x + 1)
+ * ou si condition : (fun x -> x <= N) et suivant : (fun x -> x - 1)
+ *
+ * let iterative base operation = function x ->
+ *      let resultat = ref base
+ *      for y = x to N do
+ *          resultat := operation y !resultat;
+ *      done;
+ *      !resultat
+ * ;;
+ *)
+
 
 (* ??
  * Fonctions de la forme :
