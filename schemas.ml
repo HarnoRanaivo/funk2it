@@ -19,16 +19,6 @@
  *
  * let factorielleRecTer = recursiveTerminale 1 ((=) 0) ((+) (-1)) ( * );;
  * let factorielleIter = iterative 1 ((=) 0) ((+) (-1)) ( * );;
- *
- * Dans les cas où base est une fonction...??
- * L'accumulateur semble devoir commencer à l'élément neutre de l'operation...
- * let recursiveTerminale base condition suivant operation neutre = function x ->
- *      let rec aux y t =
- *          if condition y then operation (base y) a
- *          else aux (suivant y) (operation y a)
- *      in aux y neutre
- * ;;
- *)
 let recursiveTerminale base condition suivant operation = function x ->
     let rec aux y t =
         if (condition y) then t
@@ -59,9 +49,20 @@ let iterative base condition suivant operation = function x ->
  * ;;
  *)
 
+(*
+ * Dans les cas où base est une fonction...??
+ * L'accumulateur semble devoir commencer à l'élément neutre de l'operation...
+ *)
+let recursiveTerminale3 base condition suivant operation neutre = function x ->
+     let rec aux y t =
+         if condition y then operation (base y) a
+         else aux (suivant y) (operation y a)
+     in aux y neutre
+;;
+
 
 (* ??
- * Fonctions de la forme :
+ * Fonctions de la forme (plusieurs appels récursifs) :
  * let rec fun base condition suivant1 suivant2 operation op1 op2 = function x ->
  *      if (condition x) then base
  *      else operation (op1 (fun suivant1 x)) (op2 (fun suivant2 x))
@@ -150,3 +151,24 @@ let iterative2 base condition suivant1 suivant2 operation op1 op2 = function x -
     (iterative base isEmpty toList newoper) [(x, base)]
 ;;
 
+(* Fonctions de la forme (l'appel récursif contient un appel récursif) :
+ * let rec f n =
+ *      if (condition n) then base
+ *      else operation n (g (f (h (f (i n)))))
+ * ;;
+ *
+ * Difficile de définir une fonction de cette forme qui termine.
+ * McCarthy91 termine :
+ * let rec mc91 n =
+ *      if n > 100 then n - 10
+ *      else mc91 (mc91 (n + 11))
+ * ;;
+ *
+ * let mc91RecTer n =
+ *     let rec aux n m =
+ *         if m = 0 then n
+ *         else if n > 100 then aux (n-10) (m-1)
+ *         else aux (n+11) (m+1)
+ *     in aux n 1
+ * ;;
+ *)
