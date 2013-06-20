@@ -19,7 +19,8 @@
  *
  * let factorielleRecTer = recursiveTerminale 1 ((=) 0) ((+) (-1)) ( * );;
  * let factorielleIter = iterative 1 ((=) 0) ((+) (-1)) ( * );;
-let recursiveTerminale base condition suivant operation = function x ->
+ *)
+let terminaleB base condition suivant operation = function x ->
     let rec aux y t =
         if (condition y) then t
         else (aux (suivant y) (operation y t))
@@ -27,7 +28,7 @@ let recursiveTerminale base condition suivant operation = function x ->
     (aux x base)
 ;;
 
-let iterative base condition suivant operation = function x ->
+let iterativeBWhile base condition suivant operation = function x ->
     let resultat = ref base
     and y = ref x in
     while not (condition !y) do
@@ -36,7 +37,24 @@ let iterative base condition suivant operation = function x ->
     done;
     !resultat
 ;;
-(* Peut se transformer en for, dans les cas où (condition, suivant) sont
+
+let iterativeBFor base condition suivant operation = function x ->
+    let resultat = ref base
+    and y = ref x
+    and n arg condition suivant =
+        let rec aux arg acc =
+            if (condition arg) then acc
+            else (aux (suivant arg) (acc+1))
+        in (aux arg 0)
+    in
+    for i = 0 to ((n x condition suivant) - 1) do
+        resultat := operation !y !resultat;
+        y := suivant !y;
+    done;
+    !resultat
+;;
+
+(* Peut se transformer en for,
  * si condition : (fun x -> x >= N) et suivant : (fun x -> x + 1)
  * ou si condition : (fun x -> x <= N) et suivant : (fun x -> x - 1)
  *
@@ -54,10 +72,10 @@ let iterative base condition suivant operation = function x ->
  * L'accumulateur semble devoir commencer à l'élément neutre de l'operation...
  *)
 let recursiveTerminale3 base condition suivant operation neutre = function x ->
-     let rec aux y t =
+     let rec aux y a =
          if condition y then operation (base y) a
          else aux (suivant y) (operation y a)
-     in aux y neutre
+     in aux x neutre
 ;;
 
 
@@ -117,7 +135,7 @@ let recursiveTerminale3 base condition suivant operation neutre = function x ->
  * op1 : ((+) 1)
  * op2 : ((+) 1)
  *)
-let recursiveTerminale2 base condition suivant1 suivant2 operation op1 op2 = function x ->
+let terminale2 base condition suivant1 suivant2 operation op1 op2 = function x ->
     let isEmpty l = match l with
         [] -> true
         | h :: q -> false
@@ -131,10 +149,10 @@ let recursiveTerminale2 base condition suivant1 suivant2 operation op1 op2 = fun
         | (x, accL) :: q -> if (condition x) then (operation accL acc) else
             acc
     in
-    (recursiveTerminale base isEmpty toList newoper) [(x, base)]
+    (terminaleB base isEmpty toList newoper) [(x, base)]
 ;;
 
-let iterative2 base condition suivant1 suivant2 operation op1 op2 = function x ->
+let iterative2While base condition suivant1 suivant2 operation op1 op2 = function x ->
     let isEmpty l = match l with
         [] -> true
         | h :: q -> false
@@ -148,8 +166,26 @@ let iterative2 base condition suivant1 suivant2 operation op1 op2 = function x -
         | (x, accL) :: q -> if (condition x) then (operation accL acc) else
             acc
     in
-    (iterative base isEmpty toList newoper) [(x, base)]
+    (iterativeBWhile base isEmpty toList newoper) [(x, base)]
 ;;
+
+let iterative2For base condition suivant1 suivant2 operation op1 op2 = function x ->
+    let isEmpty l = match l with
+        [] -> true
+        | h :: q -> false
+    and toList l = match l with
+        [] -> []
+        | (x, acc) :: q -> if (condition x) then q else ((suivant1 x), (op1 acc))
+        :: ((suivant2 x), (op2 acc)) :: q
+    and newoper l acc = match l with
+        [] -> acc
+        | (x, accL) :: [] -> acc
+        | (x, accL) :: q -> if (condition x) then (operation accL acc) else
+            acc
+    in
+    (iterativeBFor base isEmpty toList newoper) [(x, base)]
+;;
+
 
 (* Fonctions de la forme (l'appel récursif contient un appel récursif) :
  * let rec f n =
