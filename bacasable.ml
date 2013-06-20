@@ -143,6 +143,7 @@ fibo3 9;;
 fibo4 9;;
  *)
 
+(*
 let rec mc91 n =
     if n > 100 then n - 10
     else mc91 (mc91 (n + 11))
@@ -177,26 +178,23 @@ let mc91RecTer n =
 mc91 1;;
 mc91Iter 1;;
 mc91RecTer 1;;
-
-(*
+*)
 let rec f n =
     if n >= 20 then n / 2
-    else 3 + n + (f (n + 5))
+    else 3 * n * (f (n + 5))
 ;;
 
 let rec aux n a =
     if n >= 20 then a + n/2
-    else aux (n+5) (n+a+3)
+    else aux (n+5) (n*a*3)
 ;;
 
-let f2 n = aux n 0;;
+let f2 n = aux n 1;;
 let rec aux2 n a =
     if n = 0 then a
     else aux2 (n-1) (a*n)
 ;;
 
-let faa n = aux2 n 1;;
+(* let faa n = aux2 n 1;;*)
 f 5;;
 f2 5;;
-faa 4;;
- *)
