@@ -179,6 +179,7 @@ mc91 1;;
 mc91Iter 1;;
 mc91RecTer 1;;
 *)
+(*
 let rec f n =
     if n >= 20 then n / 2
     else 3 * n * (f (n + 5))
@@ -198,3 +199,49 @@ let rec aux2 n a =
 (* let faa n = aux2 n 1;;*)
 f 5;;
 f2 5;;
+ *)
+type 'a cheat = NULL | Cheat of 'a;;
+let cheatIsNull c = match c with NULL -> true | Cheat(x) -> false;;
+let cheatVal (Cheat(x)) = x;;
+
+let rec fgh n =
+    if n = 2 then n / 2
+    else 1 + (fgh (n-1))
+;;
+
+let ijk n =
+    let rec aux n a =
+        if n = 2 then n / 2
+        else aux (n-1) (Cheat(1 + (cheatVal a)))
+    in aux n NULL
+;;
+
+(* Fonctions sorties pour pouvoir les tracer *)
+let comp a b c = a (b c);;
+let rec aux y a base condition suivant operation =
+    if condition y then a (base y)
+    else aux (suivant y) (comp operation a y) base condition suivant operation
+;;
+let fff base condition suivant operation x =
+    aux x (fun x -> x) base condition suivant operation
+;;
+
+let m = ( * );;
+
+let facto = fff (fun x -> 1) ((=) 1) ((+) (-1)) m;;
+
+let rec aux2 a y =
+    if y = 1 then a ((fun x -> 1) y)
+    else aux2 (comp m a y) (y - 1)
+;;
+let facto2 = aux2 (fun x -> x);;
+let rec factopourri n =
+    if n = 1 then 1
+    else m n (factopourri (n-1))
+;;
+
+let rec aux3 a y =
+    if y = 1 then a
+    else aux3 (m a y) (y-1)
+;;
+let facto3 = aux3 1;;
