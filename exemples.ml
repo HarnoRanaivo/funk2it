@@ -35,21 +35,6 @@ let longueurListeRecTer = terminaleB 0 estVide queue projectionBadd1;;
 let longueurListe4While = iterativeBWhile 0 estVide queue projectionBadd1;;
 let longueurListe4For = iterativeBFor 0 estVide queue projectionBadd1;;
 
-let rec listeX2 l = match l with
-    [] -> []
-    | t :: q -> (t*2) :: (listeX2 q)
-;;
-
-let rec listeX2_2 l =
-    if (estVide l) then []
-    else (tete l) :: (listeX2_2 (queue l))
-;;
-
-(* :: n'est pas commutatif ! *)
-let concatX2 a b = ((tete a)*2) :: b;;
-let concatInvX2 a b = b @ [((tete a) * 2)];;
-
-let listeX2_3 = terminaleB [] estVide queue concatInvX2;;
 
 (* Fibonacci *)
 let rec fibonacci n =
@@ -144,3 +129,29 @@ let puissanceFunFor =
     let puissanceFunForAux = iterativeBFor (fun x -> x) (fun (a, b) -> (=) 0 a) (fun (a, b) -> ((a-1), b)) (fun (a, b) x y -> b (x y))
     in curryInv puissanceFunForAux
 ;;
+
+(* TerminaleB2 *)
+let rec factorielle2RecTer = terminaleB2 (fun x -> 1) ((=) 0) ((+) (-1)) ( * );;
+let rec factorielle2While = iterativeB2While (fun x -> 1) ((=) 0) ((+) (-1)) ( * );;
+let rec factorielle2For = iterativeB2For (fun x -> 1) ((=) 0) ((+) (-1)) ( * );;
+
+let rec listeX2 l = match l with
+    [] -> []
+    | t :: q -> (t*2) :: (listeX2 q)
+;;
+
+let rec listeX2_2 l =
+    if (estVide l) then []
+    else (tete l) :: (listeX2_2 (queue l))
+;;
+
+(* :: n'est pas commutatif ! *)
+let concatX2 a b = ((tete a)*2) :: b;;
+let concatInvX2 a b = b @ [((tete a) * 2)];;
+
+let listeX2_ManuRecTer = terminaleB [] estVide queue concatInvX2;;
+let listeX2_Noob = terminaleB [] estVide queue concatX2;;
+
+let listeX2_RecTerB2 = terminaleB2 (fun x -> []) estVide queue concatX2;;
+let listeX2_WhileB2 = iterativeB2While (fun x -> []) estVide queue concatX2;;
+let listeX2_ForB2 = iterativeB2For (fun x -> []) estVide queue concatX2;;
