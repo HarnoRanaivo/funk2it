@@ -1,7 +1,7 @@
 (* Fonctions de la forme :
- * let rec fun base condition suivant operation = function x ->
+ * let rec fun base condition iterateur operation = function x ->
  *      if (condition x) then base
- *      else operation x (fun suivant x)
+ *      else operation x (fun iterateur x)
  * ;;
  *
  * operation doit être commutative et transitive ?
@@ -14,49 +14,49 @@
  *
  * base : 1
  * condition : ((=) 0)
- * suivant : ((+) (-1))
+ * iterateur : ((+) (-1))
  * operation : ( * )
  *
  * let factorielleRecTer = recursiveTerminale 1 ((=) 0) ((+) (-1)) ( * );;
  * let factorielleIter = iterative 1 ((=) 0) ((+) (-1)) ( * );;
  *)
-let terminaleB base condition suivant operation = function x ->
+let terminaleB base condition iterateur operation = function x ->
     let rec aux y t =
         if (condition y) then t
-        else (aux (suivant y) (operation y t))
+        else (aux (iterateur y) (operation y t))
     in
     (aux x base)
 ;;
 
-let iterativeBWhile base condition suivant operation = function x ->
+let iterativeBWhile base condition iterateur operation = function x ->
     let resultat = ref base
     and y = ref x in
     while not (condition !y) do
         resultat := operation !y !resultat;
-        y := suivant !y;
+        y := iterateur !y;
     done;
     !resultat
 ;;
 
-let iterativeBFor base condition suivant operation = function x ->
+let iterativeBFor base condition iterateur operation = function x ->
     let resultat = ref base
     and y = ref x
-    and n arg condition suivant =
+    and n argument condition iterateur =
         let rec aux arg acc =
             if (condition arg) then acc
-            else (aux (suivant arg) (acc+1))
-        in (aux arg 0)
+            else (aux (iterateur arg) (acc+1))
+        in (aux argument 0)
     in
-    for i = 0 to ((n x condition suivant) - 1) do
+    for i = 0 to ((n x condition iterateur) - 1) do
         resultat := operation !y !resultat;
-        y := suivant !y;
+        y := iterateur !y;
     done;
     !resultat
 ;;
 
 (* Peut se transformer en for,
- * si condition : (fun x -> x >= N) et suivant : (fun x -> x + 1)
- * ou si condition : (fun x -> x <= N) et suivant : (fun x -> x - 1)
+ * si condition : (fun x -> x >= N) et iterateur : (fun x -> x + 1)
+ * ou si condition : (fun x -> x <= N) et iterateur : (fun x -> x - 1)
  *
  * let iterative base operation = function x ->
  *      let resultat = ref base
@@ -71,19 +71,19 @@ let iterativeBFor base condition suivant operation = function x ->
  * Dans les cas où base est une fonction...??
  * L'accumulateur semble devoir commencer à l'élément neutre de l'operation...
  *)
-let recursiveTerminale3 base condition suivant operation neutre = function x ->
+let recursiveTerminale3 base condition iterateur operation neutre = function x ->
      let rec aux y a =
          if condition y then operation (base y) a
-         else aux (suivant y) (operation y a)
+         else aux (iterateur y) (operation y a)
      in aux x neutre
 ;;
 
 
 (* ??
  * Fonctions de la forme (plusieurs appels récursifs) :
- * let rec fun base condition suivant1 suivant2 operation op1 op2 = function x ->
+ * let rec fun base condition iterateur1 iterateur2 operation op1 op2 = function x ->
  *      if (condition x) then base
- *      else operation (op1 (fun suivant1 x)) (op2 (fun suivant2 x))
+ *      else operation (op1 (fun iterateur1 x)) (op2 (fun iterateur2 x))
  * ;;
  *
  * Exemple 1 :
@@ -98,8 +98,8 @@ let recursiveTerminale3 base condition suivant operation neutre = function x ->
  * operation : (+)
  * op1 : (fun x -> x)
  * op2 : (fun x -> x)
- * suivant1 : ((+) (-1))
- * suivant2 : ((+) (-2))
+ * iterateur1 : ((+) (-1))
+ * iterateur2 : ((+) (-2))
  *
  * let fibonacciRecTer = recursiveTerminale2 1 (fun x -> x = 0 || x = 1) ((+)
  * (-1)) ((+) (-2)) (+) (fun x -> x) (fun x -> x);;
@@ -129,20 +129,20 @@ let recursiveTerminale3 base condition suivant operation neutre = function x ->
  *
  * base : 1
  * condition : (fun a -> match a with Feuille(f) -> true | Noeud(g, d) -> false)
- * suivant1 : (fun (Noeud(g, d)) -> g)
- * suivant2 : (fun (Noeud(g, d)) -> d)
+ * iterateur1 : (fun (Noeud(g, d)) -> g)
+ * iterateur2 : (fun (Noeud(g, d)) -> d)
  * operation : max
  * op1 : ((+) 1)
  * op2 : ((+) 1)
  *)
-let terminale2 base condition suivant1 suivant2 operation op1 op2 = function x ->
+let terminale2 base condition iterateur1 iterateur2 operation op1 op2 = function x ->
     let isEmpty l = match l with
         [] -> true
         | h :: q -> false
     and toList l = match l with
         [] -> []
-        | (x, acc) :: q -> if (condition x) then q else ((suivant1 x), (op1 acc))
-        :: ((suivant2 x), (op2 acc)) :: q
+        | (x, acc) :: q -> if (condition x) then q else ((iterateur1 x), (op1 acc))
+        :: ((iterateur2 x), (op2 acc)) :: q
     and newoper l acc = match l with
         [] -> acc
         | (x, accL) :: [] -> acc
@@ -152,14 +152,14 @@ let terminale2 base condition suivant1 suivant2 operation op1 op2 = function x -
     (terminaleB base isEmpty toList newoper) [(x, base)]
 ;;
 
-let iterative2While base condition suivant1 suivant2 operation op1 op2 = function x ->
+let iterative2While base condition iterateur1 iterateur2 operation op1 op2 = function x ->
     let isEmpty l = match l with
         [] -> true
         | h :: q -> false
     and toList l = match l with
         [] -> []
-        | (x, acc) :: q -> if (condition x) then q else ((suivant1 x), (op1 acc))
-        :: ((suivant2 x), (op2 acc)) :: q
+        | (x, acc) :: q -> if (condition x) then q else ((iterateur1 x), (op1 acc))
+        :: ((iterateur2 x), (op2 acc)) :: q
     and newoper l acc = match l with
         [] -> acc
         | (x, accL) :: [] -> acc
@@ -169,14 +169,14 @@ let iterative2While base condition suivant1 suivant2 operation op1 op2 = functio
     (iterativeBWhile base isEmpty toList newoper) [(x, base)]
 ;;
 
-let iterative2For base condition suivant1 suivant2 operation op1 op2 = function x ->
+let iterative2For base condition iterateur1 iterateur2 operation op1 op2 = function x ->
     let isEmpty l = match l with
         [] -> true
         | h :: q -> false
     and toList l = match l with
         [] -> []
-        | (x, acc) :: q -> if (condition x) then q else ((suivant1 x), (op1 acc))
-        :: ((suivant2 x), (op2 acc)) :: q
+        | (x, acc) :: q -> if (condition x) then q else ((iterateur1 x), (op1 acc))
+        :: ((iterateur2 x), (op2 acc)) :: q
     and newoper l acc = match l with
         [] -> acc
         | (x, accL) :: [] -> acc
@@ -208,3 +208,39 @@ let iterative2For base condition suivant1 suivant2 operation op1 op2 = function 
  *     in aux n 1
  * ;;
  *)
+
+let terminaleB2 base condition iterateur operation = function x ->
+    let composition a b = fun x -> a (b x) in
+    let rec aux accumulateur argument =
+        if (condition argument) then accumulateur (base argument)
+        else aux (composition accumulateur (operation argument)) (iterateur argument)
+    in aux (fun x -> x) x
+;;
+
+let iterativeB2While base condition iterateur operation = function x ->
+    let composition a b = fun x -> a (b x)
+    and fonctionOrdreSup = ref (fun x -> x)
+    and y = ref x in
+    while not (condition !y) do
+        fonctionOrdreSup := composition !fonctionOrdreSup (operation !y);
+        y := iterateur !y;
+    done;
+    !fonctionOrdreSup (base !y)
+;;
+
+let iterativeB2For base condition iterateur operation = function x ->
+    let composition a b = fun x -> a (b x)
+    and fonctionOrdreSup = ref (fun x -> x)
+    and y = ref x
+    and n argument condition iterateur =
+        let rec aux arg acc =
+            if (condition arg) then acc
+            else (aux (iterateur arg) (acc+1))
+        in (aux argument 0)
+    in
+    for i = 0 to ((n x condition iterateur) - 1) do
+        fonctionOrdreSup := composition !fonctionOrdreSup (operation !y);
+        y := iterateur !y;
+    done;
+    !fonctionOrdreSup (base !y)
+;;
