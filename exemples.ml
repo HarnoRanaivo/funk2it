@@ -1,4 +1,4 @@
-#use "schemas.ml";;
+open Schemas
 
 (* Exemples basiques *)
 let rec factorielle n =
@@ -14,7 +14,7 @@ let factorielleFor = iterativeBFor 1 ((=) 0) ((+) (-1)) ( * );;
 let estVide l = match l with [] -> true | t :: q -> false;;
 let queue l = match l with [] -> [] | t :: q -> q;;
 let tete l = match l with t :: q -> t;;
-let projectionBadd1 a b = b + 1;;
+let projectionBadd1 a b = (+) 1 b;;
 
 let rec longueurListe l = match l with
     [] -> 0

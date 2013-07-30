@@ -1,5 +1,5 @@
-#use "schemas.ml";;
-#use "exemples.ml";;
+open Schemas
+open Exemples
 
 (* Tests *)
 let testFactorielle n =
@@ -15,7 +15,6 @@ let testFactorielle n =
         then test := false
     done;
     !test
-;;
 
 let testLongueurListe n =
     let test = ref true
@@ -33,7 +32,6 @@ let testLongueurListe n =
         then test := false
     done;
     !test
-;;
 
 let testListeX2 n =
     let test = ref true
@@ -51,7 +49,6 @@ let testListeX2 n =
         then test := false
     done;
     !test
-;;
 
 let testFibonacci n =
     let test = ref true in
@@ -63,7 +60,6 @@ let testFibonacci n =
         then test := false
     done;
     !test
-;;
 
 let testPuissanceFun n x f =
     let test = ref true in
@@ -78,7 +74,6 @@ let testPuissanceFun n x f =
         then test := false;
     done;
     !test
-;;
 
 let testAll n =
     testFactorielle n
@@ -86,4 +81,3 @@ let testAll n =
     && testListeX2 n
     && testFibonacci n
     && testPuissanceFun n 0 (fun x -> x + 1)
-;;
