@@ -1,5 +1,6 @@
 open Schemas
-open Exemples
+
+#use "src/exemples.ml"
 
 (* Tests *)
 let testFactorielle n =

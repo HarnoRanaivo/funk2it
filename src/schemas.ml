@@ -37,13 +37,13 @@ let iterativeBWhile base condition iterateur operation = function x ->
 let iterativeBFor base condition iterateur operation = function x ->
     let resultat = ref base
     and y = ref x
-    and n argument condition iterateur =
+    and n =
         let rec aux arg acc =
             if (condition arg) then acc
             else (aux (iterateur arg) (acc+1))
-        in (aux argument 0)
+        in (aux x 0) - 1
     in
-    for i = 0 to ((n x condition iterateur) - 1) do
+    for i = 0 to n do
         resultat := operation !y !resultat;
         y := iterateur !y;
     done;

@@ -29,6 +29,8 @@ schemas.cma : schemas.cmo
 
 %.cma : %.cmo | lib
 	$(BCC) $(IFLAGS) -a -o $(LPATH)$@ $(OPATH)$<
+	# ?!
+	cp $(OPATH)*.cmi $(LPATH)
 
 # Native code
 %.cmx : %.ml | obj
